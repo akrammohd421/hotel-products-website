@@ -5,6 +5,7 @@ import CoreValues from './AboutComponents/CoreValues'
 import MissionVision from './AboutComponents/MissionVision'
 
 const About = () => {
+    document.title = "Solar Pannels | Global Quality Deivered"
   return (
     <div>
       <Breadcrumb/>  

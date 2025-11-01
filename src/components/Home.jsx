@@ -6,6 +6,7 @@ import Slider from './HomeComponents/Slider';
 
 
 function Home() {
+  document.title = "Lotus Implex | Global Quality Deivered"
   return (
     <div>
     

@@ -29,34 +29,29 @@ const ContactDetail = () => {
   };
 
   // ✅ Handle Submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setIsSubmitting(true);
+  try {
+    const response = await fetch("http://localhost:5000/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
-    try {
-      const res = await fetch("http://localhost:5000/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        alert("✅ Message sent successfully!");
-        setFormData({ fullName: "", phone: "", email: "", note: "" });
-      } else {
-        alert("❌ Failed to send message. Try again later.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("⚠️ Error sending message.");
-    } finally {
-      setIsSubmitting(false);
+    const result = await response.json();
+    if (response.ok) {
+      alert("✅ Your message has been sent!");
+      setFormData({ fullName: "", phone: "", email: "", note: "" });
+    } else {
+      alert("❌ " + result.message);
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
 
   return (
     <div className="it-contact-area pb-60">
