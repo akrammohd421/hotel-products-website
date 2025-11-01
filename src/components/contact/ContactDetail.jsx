@@ -1,67 +1,148 @@
-import React from "react";
-
-
-const coreValuesData = [
-  {
-    number: "01",
-    title: "Office Address",
-    description:
-      "House No. 628, Nagzari, Panvel, Navi Mumbai , Raigad, MH, 410 208",
-  },
-  {
-    number: "02",
-    title: "Phone Number",
-    description:
-      "+91 98210 5275 +91 98210 52755",
-  },
-  {
-    number: "03",
-    title: "Email Address",
-    description:
-      "info@lotus-impex.in sales@lotus-impex.in",
-  },
-];
+import React, { useState } from "react";
+import contactImage from "../../assets/img/about/about-1-3.jpg";
 
 const ContactDetail = () => {
-  return (
-    <div className="it-work-area">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-xl-6">
-            <div className="it-work-title-box text-center mb-70">
-            <h3
-  className="it-subtitle mb-30 core-title fs-5"
-  style={{ color: "#1d9637ff" }}
->
-  OUR CONTACT DETAILS
-</h3>
-              <h3 className="it-section-title">
-                Get in touch with us for premium solar panels, mattresses, 
-                bed sheets, and pillows—let’s create comfort and sustainability together!
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    note: "",
+  });
 
-              </h3>
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Form validation
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+    if (!/^\d{10}$/.test(formData.phone))
+      newErrors.phone = "Enter a valid 10-digit phone number";
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Enter a valid email address";
+    return newErrors;
+  };
+
+  // ✅ Handle Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        alert("✅ Message sent successfully!");
+        setFormData({ fullName: "", phone: "", email: "", note: "" });
+      } else {
+        alert("❌ Failed to send message. Try again later.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("⚠️ Error sending message.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="it-contact-area pb-60">
+      <div className="container">
+        <div className="row align-items-center">
+          {/* Left Side: Contact Form */}
+          <div className="col-xl-6">
+            <div className="it-contact-wrapp grey-bg">
+              <div className="it-contact-title-box pb-10 mb-40">
+                <h3 className="it-section-title">Get in Touch</h3>
+              </div>
+
+              <form onSubmit={handleSubmit}>
+                <div className="it-contact-input">
+                  <input
+                    type="text"
+                    name="fullName"
+                    placeholder="Full Name *"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.fullName && (
+                    <p className="text-danger">{errors.fullName}</p>
+                  )}
+                </div>
+
+                <div className="it-contact-input">
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="Phone *"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.phone && (
+                    <p className="text-danger">{errors.phone}</p>
+                  )}
+                </div>
+
+                <div className="it-contact-input">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email *"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  {errors.email && (
+                    <p className="text-danger">{errors.email}</p>
+                  )}
+                </div>
+
+                <div className="it-contact-input mb-30">
+                  <textarea
+                    name="note"
+                    placeholder="Note"
+                    value={formData.note}
+                    onChange={handleChange}
+                  ></textarea>
+                </div>
+
+                <div className="it-contact-button mb-50">
+                  <button
+                    className="it-btn-green"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send A Message"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
 
-        <div className="it-work-wrapper">
-          <div className="row">
-            {coreValuesData.map((item) => (
-              <div key={item.number} className="col-lg-4 col-md-6 mb-30">
-                <div className="it-work-item">
-                  <div className="it-work-icon-box">
-                    <span className="it-work-main-number   ">{item.number}</span>
-                    
-                      <span className="download-icon"></span>
-                    
-                  </div>
-                  <div className="it-work-content">
-                    <h3 className="it-section-title-sm">{item.title}</h3>
-                    <p>{item.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* Right Side: Image */}
+          <div className="col-xl-6">
+            <img
+              src={contactImage}
+              alt="Contact Illustration"
+              width="100%"
+              height="450"
+              style={{ objectFit: "cover", borderRadius: "8px" }}
+            />
           </div>
         </div>
       </div>

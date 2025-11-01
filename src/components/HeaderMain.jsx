@@ -99,11 +99,12 @@ const HeaderMain = () => {
                             <Link to="/solarpanels">Solar Pannels</Link>
                             
                           </li>
-                          <li>
+                          {/* <li>
                             <a href="hotel-products.html">Hotel Products</a>
-                          </li>
+                          </li> */}
                           <li>
-                            <a href="contact-lotus-impex.html">Contact Us</a>
+                              <Link to="/contact">Contact Us</Link>
+                           
                           </li>
                         </ul>
                       </nav>
